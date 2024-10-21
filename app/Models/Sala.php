@@ -13,4 +13,8 @@ class Sala extends Model
     protected $fillable = [
         'nom_sala', 'foto_sala', 'estado_sala', 'updated_at', 'created_at', 'precio_sala'
     ];
+
+    public function equiposSala() {
+        return $this->hasMany(EquiposSala::class, 'sala_pertenece', 'id_sala');
+    }
 }

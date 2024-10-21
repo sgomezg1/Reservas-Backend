@@ -23,29 +23,14 @@ Route::prefix('salas')->middleware([
 ])->group(function() {
     Route::get("/", [SalaController::class, "read"]);
     Route::get("/activas", [SalaController::class, "read_activas"]);
-    Route::post("", [SalaController::class, "create"]);
-    Route::get("/{id}", [SalaController::class, "edit"]);
-    Route::put("/{id}", [SalaController::class, "update"]);
-    Route::delete("/{id}", [SalaController::class, "delete"]);
-    Route::put("/toggle/{id}", [SalaController::class, "control_state"]);
-    Route::get("/equipos/{id}", [SalaController::class, "salas_con_equipos"]);
-    Route::get("/resources", [SalaController::class, "read_para_resources"]);
     Route::get("/nombres", [SalaController::class, "nombre_salas"]);
+    Route::get("/{id}", [SalaController::class, "edit"]);
+    Route::get("/equipos/{id}", [SalaController::class, "salas_con_equipos"]);
+    Route::post("", [SalaController::class, "create"]);
+    Route::post("/{id}", [SalaController::class, "update"]);
+    Route::put("/toggle/{id}", [SalaController::class, "control_state"]);
+    Route::delete("/{id}", [SalaController::class, "delete"]);
 });
-
-// Rutas para control de salas
-
-/* Route::get("salas/todas_salas", "SalaController@read");
-Route::get("salas/salas_activas", "SalaController@read_activas");
-Route::post("salas/crear_sala", "SalaController@create");
-Route::get("salas/datos_sala_editar/{id}", "SalaController@edit");
-Route::post("salas/actualizar_sala/{id}", "SalaController@update");
-Route::delete("salas/eliminar_sala/{id}", "SalaController@delete");
-Route::put("salas/habilitar_deshabilitar_sala/{id}", "SalaController@control_state");
-Route::get("salas/equipos_por_sala/{id}", "SalaController@salas_con_equipos");
-Route::get("salas/salas_resources", "SalaController@read_para_resources");
-Route::get("salas/nombres_salas", "SalaController@nombre_salas"); */
-
 
 // Rutas para control de usuarios
 /*
