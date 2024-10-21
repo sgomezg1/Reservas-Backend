@@ -18,8 +18,8 @@ Route::prefix('me')->middleware([
 });
 
 Route::prefix('salas')->middleware([
-    /* 'auth:sanctum',
-    'ability:empleado,admin' */
+    'auth:sanctum',
+    'ability:empleado,admin'
 ])->group(function() {
     Route::get("/", [SalaController::class, "read"]);
     Route::get("/activas", [SalaController::class, "read_activas"]);
