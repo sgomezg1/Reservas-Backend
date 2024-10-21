@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class EquiposSalaController extends Controller
 {
+    //TODO: Agregar control de excepcion ModelNotFoundException
     protected function failedValidation(Validator $validator)
 	{
 		throw new HttpResponseException(response()->json($validator->errors(), 422));
