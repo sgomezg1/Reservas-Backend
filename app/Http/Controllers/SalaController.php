@@ -97,62 +97,49 @@ class SalaController extends Controller
 
 	public function edit($id)
 	{
-		try {
-			$Sala_datos = Sala::findOrFail($id);
+		$Sala_datos = Sala::findOrFail($id);
 			return response()->json(["success" => true, "datos_sala" => $Sala_datos]);
-		} catch (ModelNotFoundHttpException $e) {
-			return response()->json(["success" => false, "mensaje" => "Error, No existe una sala con este ID"]);
-		}
 	}
 
 	public function update(Request $request, $id)
 	{
-        // dd($request);
-		try {
-			$Sala = Sala::findOrFail($id);
-			if ($request->hasFile("foto_sala")) {
-				$image = $request->file('foto_sala');
-				$name = "imagen" . time() . '.' . $image->getClientOriginalExtension();
-                Storage::disk('local')->put($name, file_get_contents($image));
-				$Sala->foto_sala = $name;
-			} else {
-				$Sala->foto_sala = $Sala->foto_sala;
-			}
-			$Sala->nom_sala = $request->nom_sala;
-			$Sala->precio_sala = $request->precio_sala;
-			$Sala->estado_sala = "1";
-			$Sala->updated_at = date("Y-m-d H:i:s");
-			$Sala->created_at = date("Y-m-d H:i:s");
-			$insertar = $Sala->save();
-			if ($insertar) {
-				$success = true;
-				$mensaje = "Sala actualizada exitosamente";
-			} else {
-				$success = false;
-				$mensaje = "Error al actualizar sala, verifique por favor los datos ingresados";
-			}
-			return response()->json(["success" => $success, "mensaje" => $mensaje]);
-		} catch (ModelNotFoundHttpException $e) {
-			return response()->json(["success" => false, "mensaje" => "Error, No existe una noticia con este ID"]);
-		}
+        $Sala = Sala::findOrFail($id);
+        if ($request->hasFile("foto_sala")) {
+            $image = $request->file('foto_sala');
+            $name = "imagen" . time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('local')->put($name, file_get_contents($image));
+            $Sala->foto_sala = $name;
+        } else {
+            $Sala->foto_sala = $Sala->foto_sala;
+        }
+        $Sala->nom_sala = $request->nom_sala;
+        $Sala->precio_sala = $request->precio_sala;
+        $Sala->estado_sala = "1";
+        $Sala->updated_at = date("Y-m-d H:i:s");
+        $Sala->created_at = date("Y-m-d H:i:s");
+        $insertar = $Sala->save();
+        if ($insertar) {
+            $success = true;
+            $mensaje = "Sala actualizada exitosamente";
+        } else {
+            $success = false;
+            $mensaje = "Error al actualizar sala, verifique por favor los datos ingresados";
+        }
+        return response()->json(["success" => $success, "mensaje" => $mensaje]);
 	}
 
 	public function delete($id)
 	{
-		try {
-			$Sala = Sala::findOrFail($id);
-			if ($Sala->delete()) {
-				File::delete($Sala->foto_sala);
-				$success = true;
-				$mensaje = "Sala eliminada con exito";
-			} else {
-				$success = false;
-				$mensaje = "Error al eliminar recurso sala  ";
-			}
-			return response()->json(["success" => $success, "mensaje" => $mensaje]);
-		} catch (ModelNotFoundHttpException $e) {
-			return response()->json(["success" => false, "mensaje" => "Error, No existe una noticia con este ID"]);
-		}
+		$Sala = Sala::findOrFail($id);
+        if ($Sala->delete()) {
+            File::delete($Sala->foto_sala);
+            $success = true;
+            $mensaje = "Sala eliminada con exito";
+        } else {
+            $success = false;
+            $mensaje = "Error al eliminar recurso sala  ";
+        }
+        return response()->json(["success" => $success, "mensaje" => $mensaje]);
 	}
 
 	public function control_state($id)
