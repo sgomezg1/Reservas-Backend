@@ -9,24 +9,17 @@ Route::controller(AuthController::class)->prefix('auth')->group(function() {
     Route::post('/signup', 'signup');
 });
 
-Route::post('logout',[AuthController::class, 'logout'])
-    ->middleware('auth:sanctum');
-
-/* Route::controller(SalaController::class)->prefix('salas')->group(function() {
-    Route::get("/", "read")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::get("/activas", "read_activas")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::post("", "create")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::get("/{id}", "edit")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::put("/{id}", "update")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::delete("/{id}", "delete")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::put("/toggle/{id}", "control_state")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::get("/equipos/{id}", "salas_con_equipos")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::get("/resources", "read_para_resources")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-    Route::get("/nombres", "nombre_salas")->middleware(['auth:sanctum', 'ability:empleado,admin']);
-})->middleware([]); */
+Route::prefix('me')->middleware([
+    'auth:sanctum',
+    'ability:banda,empleado,admin'
+])->group(function () {
+    Route::get("/", [AuthController::class, 'me']);
+    Route::post('logout', [AuthController::class, 'logout']);
+});
 
 Route::prefix('salas')->middleware([
-    'auth:sanctum', 'ability:empleado,admin'
+    'auth:sanctum',
+    'ability:empleado,admin'
 ])->group(function() {
     Route::get("/", [SalaController::class, "read"]);
     Route::get("/activas", [SalaController::class, "read_activas"]);

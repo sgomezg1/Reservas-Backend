@@ -88,7 +88,15 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json([
+            "success" => true,
+            "user" => auth()->user()->select(
+                'nom_registra',
+                'ape_registra',
+                'email',
+                'nom_banda'
+            )->first()
+        ]);
     }
 
     /**
@@ -104,16 +112,6 @@ class AuthController extends Controller
             "success" => true,
             "message"=>"Sesion finalizada"
         ]);
-    }
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh()
-    {
-        return $this->respondWithToken(auth()->refresh());
     }
 
     /**
