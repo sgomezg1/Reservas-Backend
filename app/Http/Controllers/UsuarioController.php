@@ -20,15 +20,42 @@ class UsuarioController extends Controller
 		throw new HttpResponseException(response()->json($validator->errors(), 422));
 	}
 
+    public function read() {
+        return response()->json([
+            'success' => true,
+            'user' => User::select(
+                'id',
+                'nom_registra',
+                'ape_registra',
+                'email',
+                'username',
+                'nom_banda',
+                'telefono_usuario',
+                'rol_usuario',
+                'estado_usuario'
+            )->get()
+        ]);
+    }
+
     public function edit($id) {
-        $user = User::findOrFail($id);
+        $user = User::select(
+            'id',
+            'nom_registra',
+            'ape_registra',
+            'email',
+            'username',
+            'nom_banda',
+            'telefono_usuario',
+            'rol_usuario',
+            'estado_usuario'
+        )->where('id', $id)->firstOrFail();
         return response()->json([
             "success" => true,
             "user" => $user
         ]);
     }
 
-    public function update(UsuarioRequest $request, $id) {
+    public function update(Request $request, $id) {
         $user = User::findOrFail($id);
         $user->nom_registra = $request->nom_registra;
         $user->ape_registra = $request->ape_registra;
@@ -47,6 +74,22 @@ class UsuarioController extends Controller
         return response()->json([
             "success" => true,
             "mensaje" => "Usuario actualizado exitosamente"
+        ]);
+    }
+
+    public function control_state($id) {
+        $user = User::findOrFail($id);
+        $user->estado_usuario = !$user->estado_usuario;
+        $user->save();
+		if (!$user->estado_usuario) {
+            return response()->json([
+                "success" => true,
+                "mensaje" => "Usuario desactivado correctamente"
+            ]);
+		}
+		return response()->json([
+            "success" => true,
+            "mensaje" => "Usuario activado correctamente"
         ]);
     }
 
