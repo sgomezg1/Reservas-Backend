@@ -2,12 +2,19 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquiposSalaController;
+use App\Http\Controllers\MultaController;
 use App\Http\Controllers\SalaController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(AuthController::class)->prefix('auth')->group(function() {
+Route::controller(AuthController::class)
+    ->prefix('auth')->group(function() {
     Route::post('/login', 'login');
     Route::post('/signup', 'signup');
+    Route::get("/enviar_correo_recuperacion_contrasenia/{email}", [UsuarioController::class,"enviar_correo_solicitud_reestablecer_contrasenia"]);
+    Route::put("/actualizar_pass_usuario/{email}/{token}", [UsuarioController::class,"procesar_token_de_respuesta"]);
+    Route::get("/correos_notificacion/{id}", [UsuarioController::class,"correos_notificacion"]);
+    Route::put("/editar_correos_notificacion/{id}", [UsuarioController::class,"editar_correos_notificacion"]);
 });
 
 Route::prefix('me')->middleware([
@@ -20,7 +27,7 @@ Route::prefix('me')->middleware([
 
 Route::prefix('salas')->middleware([
     'auth:sanctum',
-    'ability:empleado,admin'
+    'ability:admin'
 ])->group(function() {
     Route::get("", [SalaController::class, "read"]);
     Route::get("/activas", [SalaController::class, "read_activas"]);
@@ -37,7 +44,7 @@ Route::prefix('salas')->middleware([
 
 Route::prefix('equipos')->middleware([
     'auth:sanctum',
-    'ability:empleado,admin'
+    'ability:admin'
 ])->group(function() {
     Route::get("", [EquiposSalaController::class, "read"]);
     Route::post("", [EquiposSalaController::class, "create"]);
@@ -47,15 +54,30 @@ Route::prefix('equipos')->middleware([
     Route::delete("/{id}", [SalaController::class, "delete"]);
 });
 
-// Rutas para el control de multas
+Route::prefix('usuarios')->middleware([
+    'auth:sanctum',
+    'ability:empleado,admin'
+])->group(function() {
+    Route::get("", [UsuarioController::class,"read"]);
+    Route::post("", [AuthController::class,"signup"]);
+    Route::get("/{id}", [UsuarioController::class,"edit"]);
+    Route::put("/{id}", [UsuarioController::class,"update"]);
+    Route::delete("/{id}", [UsuarioController::class,"delete"]);
+    Route::put("/toggle/{id}", [UsuarioController::class,"control_state"]);
+});
 
-/* Route::get("multas/todas_multas", "MultaController@read");
-Route::post("multas/crear_multa", "MultaController@create");
-Route::get("multas/datos_multa_editar/{id}", "MultaController@edit");
-Route::get("multas/multas_por_usuario/{id}", "MultaController@multas_por_usuario");
-Route::put("multas/editar_multa/{id}", "MultaController@update");
-Route::put("multas/habilitar_deshabilitar_multa/{id}", "MultaController@control_state");
-Route::get("multas/validar_usuario_por_multa/{id}", "MultaController@validar_usuario_con_multa"); */
+/* Route::prefix('multas')->middleware([
+    'auth:sanctum',
+    'ability:empleado,admin'
+])->group(function() {
+    Route::get("", [MultaController::class, "read"]);
+    Route::get("/{id}", [MultaController::class, "edit"]);
+    Route::get("/usuario/{id}", [MultaController::class, "multas_por_usuario"]);
+    Route::get("/usuario_multa/{id}", [MultaController::class, "validar_usuario_con_multa"]);
+    Route::post("", [MultaController::class, "create"]);
+    Route::put("/{id}", [MultaController::class, "update"]);
+    Route::put("/toggle/{id}", [MultaController::class, "control_state"]);
+}); */
 
 // Rutas para el control de adicionales
 
@@ -81,19 +103,6 @@ Route::get("descuentos/descuentos_fecha_hora/{fecha}/{hora}", "DescuentoControll
 // Rutas para obtener datos de reserva_adicional
 
 // Route::get("reserva_adicional/datos_reserva_adicional_por_id_reserva/{id}", "Reserva_adicionalController@datos_reserva_adicional_por_id_reserva");
-
-// Rutas para control de usuarios
-/*
-Route::get("usuarios/todos_usuarios", "UsuarioController@read");
-Route::post("usuarios/crear_usuario", "UsuarioController@create");
-Route::get("usuarios/datos_usuario_editar/{id}", "UsuarioController@edit");
-Route::put("usuarios/actualizar_usuario/{id}", "UsuarioController@update");
-Route::delete("usuarios/eliminar_usuario/{id}", "UsuarioController@delete");
-Route::put("usuarios/habilitar_deshabilitar_usuario/{id}", "UsuarioController@control_state");
-Route::get("usuarios/enviar_correo_recuperacion_contrasenia/{email}", "UsuarioController@enviar_correo_solicitud_reestablecer_contrasenia");
-Route::put("usuarios/actualizar_pass_usuario/{email}/{token}", "UsuarioController@procesar_token_de_respuesta");
-Route::get("usuarios/correos_notificacion/{id}", "UsuarioController@correos_notificacion");
-Route::put("usuarios/editar_correos_notificacion/{id}", "UsuarioController@editar_correos_notificacion"); */
 
 // Rutas para control de reservas
 
