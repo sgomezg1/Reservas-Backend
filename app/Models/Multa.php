@@ -13,4 +13,8 @@ class Multa extends Model
     protected $fillable = [
         'reserva_id', 'total_multa', 'estado_multa', 'updated_at', 'created_at', 'usuario_multa'
     ];
+
+    public function reserva() {
+        return $this->hasOne(Reserva::class, "id_multa", "reserva_id");
+    }
 }
