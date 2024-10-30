@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdicionalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquiposSalaController;
 use App\Http\Controllers\MultaController;
@@ -92,6 +93,18 @@ Route::prefix('reservas')->middleware([
     Route::put("recordatorios", [ReservaController::class, "enviar_recordatorio_por_banda"]);
     // TODO: Corregir este endpoint al finalizar el trabajo con adicionales
     Route::get("adicionales/{id}", [Reserva_adicionalController::class, "datos_reserva_adicional_por_id_reserva"]);
+});
+
+Route::prefix('adicionales')->middleware([
+    'auth:sanctum',
+    'ability:admin'
+])->group(function() {
+    Route::get("", [AdicionalController::class, "read"]);
+    Route::get("/{id}", [AdicionalController::class, "edit"]);
+    Route::get("/adicionales_reserva/{fecha}/{hora}", [AdicionalController::class, "adicionales_para_reserva"]);
+    Route::post("", [AdicionalController::class, "create"]);
+    Route::put("/{id}", [AdicionalController::class, "update"]);
+    Route::put("/toggle/{id}", [AdicionalController::class, "control_state"]);
 });
 
 /* Route::prefix('multas')->middleware([
