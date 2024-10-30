@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquiposSalaController;
 use App\Http\Controllers\MultaController;
+use App\Http\Controllers\Reserva_adicionalController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\SalaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +68,32 @@ Route::prefix('usuarios')->middleware([
     Route::put("/toggle/{id}", [UsuarioController::class,"control_state"]);
 });
 
+Route::prefix('reservas')->middleware([
+    'auth:sanctum',
+    'ability:empleado,admin,banda'
+])->group(function() {
+    Route::get("", [ReservaController::class, "read"]);
+    Route::get("/{id}", [ReservaController::class, "edit"]);
+    Route::get("admin", [ReservaController::class, "read_admin"]);
+    Route::get("admin/{id}", [ReservaController::class, "datos_reserva_admin"]);
+    Route::get("ensayos/dia/all/{fecha}/{id}", [ReservaController::class, "traer_todos_ensayos_por_dia"]);
+    Route::get("ensayos/dia/admin/{fecha}", [ReservaController::class, "agenda_ensayos_dia_admin"]);
+    Route::get("ensayos/mes/admin/{id}/{fecha}", [ReservaController::class, "read_ensayos_de_mes_por_banda"]);
+    Route::get("ensayos/banda/dia/{fecha}", [ReservaController::class, "read_ensayo_por_dia_y_banda"]);
+    Route::get("/user/{id}", [ReservaController::class, "read_por_usuario"]);
+    Route::get("/horarios/dia/{fecha_reserva}/{id_sala}", [ReservaController::class, "horarios_disponibles_calendario"]);
+    Route::get("/fecha/sala/{fecha}/{sala}", [ReservaController::class, "read_disponibilidad_por_fecha_y_sala"]);
+    Route::get("/fechas/calendario", [ReservaController::class, "primer_dia_ultimo_dia_entre_meses"]);
+    Route::post("", [ReservaController::class, "create"]);
+    Route::put("/{id}", [ReservaController::class, "update"]);
+    Route::delete("/{id}", [ReservaController::class, "delete"]);
+    Route::put("asistencia/{id}", [ReservaController::class, "cambiar_estado_asistencia_ensayo"]);
+    // TODO: Hacer funcionar los correos
+    Route::put("recordatorios", [ReservaController::class, "enviar_recordatorio_por_banda"]);
+    // TODO: Corregir este endpoint al finalizar el trabajo con adicionales
+    Route::get("adicionales/{id}", [Reserva_adicionalController::class, "datos_reserva_adicional_por_id_reserva"]);
+});
+
 /* Route::prefix('multas')->middleware([
     'auth:sanctum',
     'ability:empleado,admin'
@@ -101,26 +129,3 @@ Route::put("descuentos/hab_deshab_descuento/{id}", "DescuentoController@control_
 Route::get("descuentos/descuentos_fecha_hora/{fecha}/{hora}", "DescuentoController@descuentos_fecha_hora"); */
 
 // Rutas para obtener datos de reserva_adicional
-
-// Route::get("reserva_adicional/datos_reserva_adicional_por_id_reserva/{id}", "Reserva_adicionalController@datos_reserva_adicional_por_id_reserva");
-
-// Rutas para control de reservas
-
-/* Route::get("reservas/todas_reservas", "ReservaController@read");
-Route::get("reservas/todas_reservas_admin", "ReservaController@read_admin");
-Route::post("reservas/crear_reserva", "ReservaController@create");
-Route::get("reservas/datos_reserva_editar/{id}", "ReservaController@edit");
-Route::get("reservas/datos_reserva_por_usuario/{id}", "ReservaController@read_por_usuario");
-Route::put("reservas/actualizar_reserva/{id}", "ReservaController@update");
-Route::delete("reservas/eliminar_reserva/{id}", "ReservaController@delete");
-Route::get("reservas/horarios_disponibles_por_dia/{fecha_reserva}/{id_sala}", "ReservaController@horarios_disponibles_calendario");
-Route::get("reservas/datos_reserva_por_id_admin/{id}", "ReservaController@datos_reserva_admin");
-Route::put("reservas/activar_reservas", "ReservaController@ocultar_reserva_cada_dos_horas");
-Route::put("reservas/enviar_recordatorios", "ReservaController@enviar_recordatorio_por_banda");
-Route::put("reservas/confirmar_asistencia_ensayo/{id}", "ReservaController@cambiar_estado_asistencia_ensayo");
-Route::get("reservas/reserva_por_fecha_y_sala/{fecha}/{sala}", "ReservaController@read_disponibilidad_por_fecha_y_sala");
-Route::get("reservas/traer_fechas_validas_calendario", "ReservaController@primer_dia_ultimo_dia_entre_meses");
-Route::get("reservas/ensayos_por_dia/{fecha}/{id}", "ReservaController@traer_todos_ensayos_por_dia");
-Route::get("reservas/ensayos_por_dia_admin/{fecha}", "ReservaController@agenda_ensayos_dia_admin");
-Route::get("reservas/ensayos_por_mes_por_banda/{id}/{fecha}", "ReservaController@read_ensayos_de_mes_por_banda");
-Route::get("reservas/ensayo_por_dia/{fecha}", "ReservaController@read_ensayo_por_dia_y_banda"); */

@@ -30,4 +30,12 @@ class User extends Authenticatable
     public function rol() {
         return $this->hasOne(Rol::class, 'id_rol', 'rol_usuario');
     }
+
+    public function reservas() {
+        return $this->hasMany(Reserva::class, "id_usuario_reserva", "id");
+    }
+
+    public function correosAdicionales() {
+        return $this->hasMany(CorreosUsuario::class, "id_usuario_pert", "id");
+    }
 }

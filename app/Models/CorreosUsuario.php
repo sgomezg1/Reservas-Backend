@@ -16,4 +16,8 @@ class CorreosUsuario extends Model
         'dir_correo',
         'id_usuario_pert'
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }
