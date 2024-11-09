@@ -97,13 +97,14 @@ Route::prefix('reservas')->middleware([
 
 Route::prefix('adicionales')->middleware([
     'auth:sanctum',
-    'ability:admin'
+    /* 'ability:admin' */
 ])->group(function() {
     Route::get("", [AdicionalController::class, "read"]);
     Route::get("/{id}", [AdicionalController::class, "edit"]);
-    Route::get("/adicionales_reserva/{fecha}/{hora}", [AdicionalController::class, "adicionales_para_reserva"]);
+    Route::get("/reserva/{id}", [AdicionalController::class, "adicionales_para_reserva"]);
     Route::post("", [AdicionalController::class, "create"]);
     Route::put("/{id}", [AdicionalController::class, "update"]);
+    Route::delete("/{id}", [AdicionalController::class, "delete"]);
     Route::put("/toggle/{id}", [AdicionalController::class, "control_state"]);
 });
 
@@ -119,15 +120,6 @@ Route::prefix('adicionales')->middleware([
     Route::put("/{id}", [MultaController::class, "update"]);
     Route::put("/toggle/{id}", [MultaController::class, "control_state"]);
 }); */
-
-// Rutas para el control de adicionales
-
-/* Route::get("adicionales/todos_adicionales", "AdicionalController@read");
-Route::get("adicionales/adicionales_reserva/{fecha}/{hora}", "AdicionalController@adicionales_para_reserva");
-Route::post("adicionales/crear_adicional", "AdicionalController@create");
-Route::get("adicionales/datos_adicional_editar/{id}", "AdicionalController@edit");
-Route::put("adicionales/editar_adicional/{id}", "AdicionalController@update");
-Route::put("adicionales/habilitar_deshabilitar_adicional/{id}", "AdicionalController@control_state"); */
 
 // Rutas para el control de descuentos
 

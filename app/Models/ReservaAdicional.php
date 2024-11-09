@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Reserva_adicional extends Model
+class ReservaAdicional extends Model
 {
     protected $table = "reserva_adicional";
 

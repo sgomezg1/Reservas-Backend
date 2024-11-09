@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Adicional;
 use App\Http\Requests\AdicionalRequest;
+use App\Models\Reserva;
+use App\Models\ReservaAdicional;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -18,51 +20,20 @@ class AdicionalController extends Controller
     // Metodo para traer todas las Adicional en formato JSON para el datatable del administrador
 
 	public function read(){
-		$Adicional = new Adicional();
-		$Adicional_reenviar = $Adicional::all();
-		return response()->json($Adicional_reenviar);
+		return response()->json([
+            "success" => true,
+            "adicionales" => Adicional::all()
+        ]);
 	}
 
-	public function adicionales_para_reserva($fecha, $hora) {
-		$array_adicionales = array();
-		$array_reservados = array();
-		$adicional = Adicional::where("estado_adicional", true)->get();
-		$reservas_adicional = DB::table("reserva_adicional")
-			->select("adicional_id", DB::raw('count(adicional_id) as total'))
-			->where("fecha_reserva", "=", $fecha)
-			->where("hora_reserva", "=", $hora)
-			->groupBy('adicional_id')
-			->get();
-		if(sizeof($reservas_adicional) > 0) {
-			foreach($adicional as $ad) {
-				$array_agregar = array(
-					'id_adicional' => $ad->id_adicional,
-					'cant_adicional' => $ad->cant_adicional,
-					'nom_adicional' => $ad->nom_adicional,
-					'precio_adicional' => $ad->precio_adicional
-				);
-				array_push($array_adicionales, $array_agregar);
-				foreach($reservas_adicional as $res) {
-					$array_agregar = array(
-						'adicional_id' => $res->adicional_id,
-						'total' => $res->total
-					);
-					array_push($array_reservados, $array_agregar);
-				}
-			}
-
-			foreach($array_adicionales as $key => $add) {
-				foreach($array_reservados as $key2 => $reser) {
-					if(  ($add['id_adicional'] == $reser['adicional_id']) && ($add['cant_adicional'] == $reser['total']) ) {
-						unset($array_adicionales[$key]);
-						break;
-					}
-				}
-			}
-			return response()->json(array_values($array_adicionales));
-		} else {
-			return response()->json($adicional);
-		}
+	public function adicionales_para_reserva($id) {
+        $adicionalesParaReserva = Reserva::with('adicionales')
+            ->where("id_reserva", $id)
+            ->first();
+        return response()->json([
+            "success" => true,
+            "adicionales" => $adicionalesParaReserva
+        ]);
 	}
 
     public function create(AdicionalRequest $request){
@@ -77,19 +48,21 @@ class AdicionalController extends Controller
 			$adicional->nom_adicional = $request->nom_adicional;
 			$adicional->cant_adicional = $request->cant_adicional;
             $adicional->precio_adicional = $request->precio_adicional;
-            $adicional->estado_adicional = 1;
+            $adicional->estado_adicional = true;
             $insertar = $adicional->save();
-            if($insertar){
-                $success = true;
-                $mensaje = "Adicional creado exitosamente";
-                //$token = $this->login($request);
-            } else {
-                $success = false;
-                $mensaje = "Error al crear adicional, intentelo mas tarde";
+            if(!$insertar){
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => "Error al crear adicional, intentelo mas tarde"
+                ]);
             }
+            return response()->json([
+                'success' => true,
+                'mensaje' => "Adicional creado exitosamente"
+            ]);
 	    }
 
-        return response()->json(['success' => $success, 'mensaje' => $mensaje]);
+
     }
 
     public function edit($id){
@@ -137,9 +110,9 @@ class AdicionalController extends Controller
         $adicional = Adicional::findOrFail($id);
         $adicional->estado_adicional = !$adicional->estado_adicional;
         $adicional->save();
-        $mensaje = "Adicional inhabilitado correctamente";
+        $mensaje = "El Adicional esta habilitado ahora mismo";
         if(!$adicional->estado_adicional){
-            $mensaje = "El Adicional esta habilitado ahora mismo";
+            $mensaje = "Adicional inhabilitado correctamente";
         }
 		return response()->json([
             "success" => true,
