@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdicionalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquiposSalaController;
 use App\Http\Controllers\MultaController;
@@ -94,6 +95,19 @@ Route::prefix('reservas')->middleware([
     Route::get("adicionales/{id}", [Reserva_adicionalController::class, "datos_reserva_adicional_por_id_reserva"]);
 });
 
+Route::prefix('adicionales')->middleware([
+    'auth:sanctum',
+    'ability:admin'
+])->group(function() {
+    Route::get("", [AdicionalController::class, "read"]);
+    Route::get("/{id}", [AdicionalController::class, "edit"]);
+    Route::get("/reserva/{id}", [AdicionalController::class, "adicionales_para_reserva"]);
+    Route::post("", [AdicionalController::class, "create"]);
+    Route::put("/{id}", [AdicionalController::class, "update"]);
+    Route::delete("/{id}", [AdicionalController::class, "delete"]);
+    Route::put("/toggle/{id}", [AdicionalController::class, "control_state"]);
+});
+
 /* Route::prefix('multas')->middleware([
     'auth:sanctum',
     'ability:empleado,admin'
@@ -106,15 +120,6 @@ Route::prefix('reservas')->middleware([
     Route::put("/{id}", [MultaController::class, "update"]);
     Route::put("/toggle/{id}", [MultaController::class, "control_state"]);
 }); */
-
-// Rutas para el control de adicionales
-
-/* Route::get("adicionales/todos_adicionales", "AdicionalController@read");
-Route::get("adicionales/adicionales_reserva/{fecha}/{hora}", "AdicionalController@adicionales_para_reserva");
-Route::post("adicionales/crear_adicional", "AdicionalController@create");
-Route::get("adicionales/datos_adicional_editar/{id}", "AdicionalController@edit");
-Route::put("adicionales/editar_adicional/{id}", "AdicionalController@update");
-Route::put("adicionales/habilitar_deshabilitar_adicional/{id}", "AdicionalController@control_state"); */
 
 // Rutas para el control de descuentos
 

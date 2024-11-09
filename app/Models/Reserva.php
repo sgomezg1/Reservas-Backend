@@ -37,4 +37,8 @@ class Reserva extends Model
     public function multa() {
         return $this->belongsTo(Multa::class, "id_reserva", "reserva_id");
     }
+
+    public function adicionales() {
+        return $this->belongsToMany(Adicional::class, 'reserva_adicional', 'reserva_id', 'adicional_id');
+    }
 }

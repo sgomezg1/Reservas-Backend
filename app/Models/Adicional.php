@@ -13,6 +13,10 @@ class Adicional extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'precio_adicional', 'precio_adicional', 'precio_adicional', 'estado_adicional'
+        'nom_adicional', 'cant_adicional', 'precio_adicional', 'estado_adicional'
     ];
+
+    public function reservas() {
+        return $this->belongsToMany(Reserva::class, 'reserva_adicional', 'adicional_id', 'reserva_id');
+    }
 }
