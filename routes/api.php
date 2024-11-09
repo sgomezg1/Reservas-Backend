@@ -97,7 +97,7 @@ Route::prefix('reservas')->middleware([
 
 Route::prefix('adicionales')->middleware([
     'auth:sanctum',
-    /* 'ability:admin' */
+    'ability:admin'
 ])->group(function() {
     Route::get("", [AdicionalController::class, "read"]);
     Route::get("/{id}", [AdicionalController::class, "edit"]);
